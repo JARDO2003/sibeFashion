@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIBE STYLE — Espace fournisseur</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  body { background: #f6f5f1; }
+  .admin-shell { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+  .admin-side { background: var(--black); color: #fff; padding: 26px 18px; }
+  .admin-side .logo { color: #fff; margin-bottom: 30px; }
+  .admin-side nav button {
+    display: block; width: 100%; text-align: left; background: none; border: none; color: #cfcabd;
+    padding: 12px 14px; border-radius: 6px; font-size: 14px; margin-bottom: 4px;
+  }
+  .admin-side nav button.active, .admin-side nav button:hover { background: #232019; color: #fff; }
+  .admin-main { padding: 32px 36px; }
+  .admin-topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 26px; }
+  .admin-topbar h1 { font-family: var(--font-display); font-size: 28px; margin: 0; }
+  .stat-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 28px; }
+  .stat-card { background: #fff; border-radius: 8px; padding: 18px 20px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+  .stat-card span { display:block; font-size:12px; color:#8a8578; text-transform:uppercase; letter-spacing:.5px; }
+  .stat-card strong { font-size: 26px; font-family: var(--font-display); }
+  .panel { background: #fff; border-radius: 8px; padding: 22px; box-shadow: 0 1px 3px rgba(0,0,0,.06); margin-bottom: 24px; }
+  .panel h2 { font-size: 18px; margin: 0 0 16px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid #eee; vertical-align: top; }
+  th { color: #8a8578; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: .5px; }
+  .badge { padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+  .badge.en_attente { background: #fdf1d4; color: #9a6d00; }
+  .badge.confirmee { background: #dbeafe; color: #1d4ed8; }
+  .badge.en_cours { background: #e6e0ff; color: #5b21b6; }
+  .badge.livree { background: #dcfce7; color: #15803d; }
+  .badge.annulee { background: #fde2e2; color: #b91c1c; }
+  select.status-select { font-size: 12px; padding: 5px 8px; border-radius: 6px; border: 1px solid #ddd; }
+  .prod-row img { width: 44px; height: 54px; object-fit: cover; border-radius: 4px; background:#eee; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--black); }
+  .login-box { background: #fff; padding: 36px; border-radius: 10px; width: 100%; max-width: 360px; }
+  .login-box h2 { font-family: var(--font-display); font-size: 26px; margin: 0 0 4px; }
+  .login-box p.sub { color: #8a8578; font-size: 13px; margin-bottom: 20px; }
+  .small-btn { font-size: 12px; padding: 7px 12px; border-radius: 6px; border: 1px solid var(--black); background: #fff; }
+  .small-btn.primary { background: var(--black); color: #fff; }
+  .tag-input { display:flex; gap:8px; flex-wrap:wrap; margin-top:6px; }
+  .img-preview { width: 100%; height: 140px; object-fit: cover; border-radius: 6px; background: #f0efe9; margin-bottom: 8px; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- ==================== ÉCRAN DE CONNEXION ==================== -->
+<div class="login-screen" id="login-screen">
+  <div class="login-box">
+    <h2>SIBE STYLE</h2>
+    <p class="sub">Espace fournisseur — connectez-vous pour gérer la boutique.</p>
+    <div class="form-group"><label>Email</label><input id="login-email" type="email" placeholder="fournisseur@sibestyle.com"></div>
+    <div class="form-group"><label>Mot de passe</label><input id="login-password" type="password"></div>
+    <button class="btn btn-primary" style="width:100%;" onclick="doLogin()">Se connecter</button>
+    <p id="login-error" style="color:#b91c1c;font-size:12px;margin-top:10px;"></p>
+    <p style="font-size:11px;color:#999;margin-top:16px;line-height:1.5;">
+      Première connexion ? Créez le compte fournisseur une fois dans la console Firebase
+      (Authentication → Email/mot de passe), ou demandez à votre développeur d'activer
+      l'inscription libre ci-dessous.
+    </p>
+    <button class="small-btn" style="width:100%;margin-top:8px;" onclick="doSignup()">Créer un compte fournisseur</button>
+  </div>
+</div>
+
+<!-- ==================== TABLEAU DE BORD ==================== -->
+<div class="admin-shell hidden" id="admin-shell">
+  <aside class="admin-side">
+    <div class="logo">SIBE<small>STYLE</small></div>
+    <nav>
+      <button class="active" data-tab="commandes" onclick="switchTab('commandes')">📦 Commandes</button>
+      <button data-tab="produits" onclick="switchTab('produits')">👕 Produits</button>
+      <button data-tab="categories" onclick="switchTab('categories')">🗂️ Catégories</button>
+      <button data-tab="promotions" onclick="switchTab('promotions')">🏷️ Promotions</button>
+      <button data-tab="proverbes" onclick="switchTab('proverbes')">📜 Proverbes</button>
+    </nav>
+    <button class="small-btn" style="width:100%;margin-top:30px;color:#fff;border-color:#555;" onclick="doLogout()">Se déconnecter</button>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <h1 id="tab-title">Commandes</h1>
+      <span id="admin-user-email" style="font-size:12px;color:#8a8578;"></span>
+    </div>
+
+    <div class="stat-row" id="stat-row"></div>
+
+    <!-- ---- COMMANDES ---- -->
+    <section id="tab-commandes" class="tab-panel">
+      <div class="panel">
+        <h2>Toutes les commandes</h2>
+        <table>
+          <thead><tr><th>Client</th><th>Type</th><th>Détail</th><th>Montant</th><th>Statut</th><th>Date</th></tr></thead>
+          <tbody id="orders-body"><tr><td colspan="6">Chargement...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ---- PRODUITS ---- -->
+    <section id="tab-produits" class="tab-panel hidden">
+      <div class="panel">
+        <h2>Ajouter un vêtement</h2>
+        <form id="product-form" onsubmit="submitProduct(event)">
+          <div class="grid-2">
+            <div>
+              <div class="form-group"><label>Nom du produit</label><input required name="nom"></div>
+              <div class="form-group"><label>Catégorie</label>
+                <select name="categorie" id="product-cat-select"><option>T-shirts</option></select>
+              </div>
+              <div class="grid-2">
+                <div class="form-group"><label>Prix (FCFA)</label><input required type="number" name="prix"></div>
+                <div class="form-group"><label>Stock</label><input type="number" name="stock" value="10"></div>
+              </div>
+              <div class="form-group"><label>Description</label><textarea name="description"></textarea></div>
+            </div>
+            <div>
+              <div class="form-group">
+                <label>Photo du produit</label>
+                <img id="product-img-preview" class="img-preview hidden">
+                <input type="file" accept="image/*" name="image" id="product-image-input" onchange="previewImage(this,'product-img-preview')">
+                <p id="upload-progress" style="font-size:11px;color:#8a8578;margin-top:6px;"></p>
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-primary" type="submit">Ajouter le produit</button>
+        </form>
+      </div>
+      <div class="panel">
+        <h2>Catalogue</h2>
+        <table>
+          <thead><tr><th>Produit</th><th>Catégorie</th><th>Prix</th><th>Promo</th><th>Stock</th><th>Actions</th></tr></thead>
+          <tbody id="products-body"><tr><td colspan="6">Chargement...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ---- CATEGORIES ---- -->
+    <section id="tab-categories" class="tab-panel hidden">
+      <div class="panel">
+        <h2>Ajouter une catégorie</h2>
+        <form onsubmit="submitCategory(event)">
+          <div class="grid-2">
+            <div class="form-group"><label>Nom</label><input required name="nom" id="cat-nom"></div>
+            <div class="form-group">
+              <label>Image</label>
+              <input type="file" accept="image/*" id="cat-image-input">
+            </div>
+          </div>
+          <button class="btn btn-primary" type="submit">Ajouter la catégorie</button>
+        </form>
+      </div>
+      <div class="panel">
+        <h2>Catégories existantes</h2>
+        <table><thead><tr><th>Image</th><th>Nom</th><th>Actions</th></tr></thead><tbody id="categories-body"></tbody></table>
+      </div>
+    </section>
+
+    <!-- ---- PROMOTIONS ---- -->
+    <section id="tab-promotions" class="tab-panel hidden">
+      <div class="panel">
+        <h2>Gérer les promotions</h2>
+        <p style="font-size:13px;color:#8a8578;">Activez une promotion et indiquez le prix promotionnel. Le prix barré s'affichera automatiquement sur la boutique.</p>
+        <table>
+          <thead><tr><th>Produit</th><th>Prix normal</th><th>Prix promo</th><th>Active ?</th><th></th></tr></thead>
+          <tbody id="promo-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ---- PROVERBES ---- -->
+    <section id="tab-proverbes" class="tab-panel hidden">
+      <div class="panel">
+        <h2>Ajouter un proverbe</h2>
+        <p style="font-size:13px;color:#8a8578;">Ces proverbes s'ajoutent à la banque locale déjà intégrée au site (~225 proverbes) et apparaissent aléatoirement sur l'écran de bienvenue.</p>
+        <form onsubmit="submitProverb(event)">
+          <div class="form-group"><label>Texte du proverbe</label><textarea required id="proverb-text"></textarea></div>
+          <button class="btn btn-primary" type="submit">Ajouter</button>
+        </form>
+      </div>
+      <div class="panel">
+        <h2>Proverbes ajoutés en base (<span id="proverb-count">0</span>)</h2>
+        <table><thead><tr><th>Texte</th><th></th></tr></thead><tbody id="proverbs-body"></tbody></table>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="js/firebase-init.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

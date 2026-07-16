@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIBE STYLE — Le style qui te distingue</title>
+<meta name="description" content="SIBE STYLE — Streetwear premium. Commandez des vêtements déjà cousus ou faites coudre votre pièce sur mesure.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ==================== SPLASH SCREEN ==================== -->
+<div id="splash">
+  <video id="splash-video" autoplay muted loop playsinline poster="assets/splash-poster.jpg">
+    <!-- Remplacez ces sources par vos propres vidéos (mannequins, atelier de couture, défilé...) -->
+    <source src="assets/splash-video.mp4" type="video/mp4">
+  </video>
+  <div class="splash-content">
+    <div class="splash-eyebrow">Bienvenue chez</div>
+    <h1 class="splash-title">SIBE STYLE</h1>
+    <p class="splash-proverb" id="splash-proverb">Chargement…</p>
+    <div class="splash-proverb-source">Sagesse africaine</div>
+    <button class="splash-enter" id="splash-enter">Entrer dans la boutique →</button>
+  </div>
+  <div class="splash-loader"><span></span></div>
+</div>
+
+<!-- ==================== TOP BAR ==================== -->
+<div class="top-bar">
+  <div class="container">
+    <span>Livraison gratuite à partir de 50 000 FCFA</span>
+    <span>🔍 Suivre ma commande</span>
+  </div>
+</div>
+
+<!-- ==================== HEADER ==================== -->
+<header class="site-header">
+  <div class="container">
+    <a href="#" class="logo">SIBE<small>STYLE</small></a>
+    <nav class="main-nav">
+      <ul>
+        <li><a href="#accueil">Accueil</a></li>
+        <li><a href="#homme">Homme</a></li>
+        <li><a href="#femme">Femme</a></li>
+        <li><a href="#nouveautes">Nouveautés</a></li>
+        <li><a href="#collections">Collections</a></li>
+        <li><a href="#promotions">Promotions</a></li>
+      </ul>
+    </nav>
+    <div class="header-icons">
+      <button aria-label="Rechercher">🔍</button>
+      <button id="cart-btn" aria-label="Panier">🛍️<span class="cart-count" id="cart-count">0</span></button>
+      <button aria-label="Compte">👤</button>
+      <button class="mobile-nav-toggle" aria-label="Menu">☰</button>
+    </div>
+  </div>
+</header>
+
+<!-- ==================== HERO ==================== -->
+<section class="hero" id="accueil">
+  <div class="container">
+    <div class="hero-text">
+      <div class="eyebrow">NOUVELLE COLLECTION</div>
+      <h1>Le style qui<br>te distingue.</h1>
+      <p>Découvrez les dernières tendances streetwear premium — pièces prêtes à porter ou cousues sur mesure, rien que pour vous.</p>
+      <div class="hero-cta">
+        <button class="btn btn-primary" onclick="document.getElementById('nouveautes').scrollIntoView({behavior:'smooth'})">Acheter maintenant</button>
+        <button class="btn btn-secondary" onclick="openChatbot()">Commande sur mesure</button>
+      </div>
+    </div>
+    <div class="hero-image">
+      <img src="https://images.unsplash.com/photo-1618354691373-d851c5c3a990?q=80&w=1200&auto=format&fit=crop" alt="Modèle streetwear SIBE STYLE">
+      <div class="hero-nav">
+        <button onclick="heroPrev()">←</button>
+        <button onclick="heroNext()">→</button>
+        <span class="hero-count"><span id="hero-idx">1</span> / 3</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CATEGORIES ==================== -->
+<section id="categories">
+  <div class="container">
+    <div class="section-head"><h2>Catégories</h2><a href="#nouveautes">Voir tout</a></div>
+    <div class="cat-grid" id="cat-grid">
+      <!-- injecté par JS, avec repli statique si Firestore est vide -->
+    </div>
+  </div>
+</section>
+
+<!-- ==================== NOUVELLE COLLECTION / PRODUITS ==================== -->
+<section id="nouveautes">
+  <div class="container">
+    <div class="section-head"><h2>Nouvelle collection</h2><a href="#" id="see-all-products">Voir tout</a></div>
+    <div class="prod-grid" id="prod-grid">
+      <!-- injecté par JS depuis Firestore (collection "produits") -->
+    </div>
+  </div>
+</section>
+
+<!-- ==================== MODE DE COMMANDE ==================== -->
+<section id="commande">
+  <div class="container">
+    <div class="order-mode">
+      <div class="container" style="padding:44px 32px;">
+        <div class="order-mode-card">
+          <h3>Acheter un modèle prêt</h3>
+          <p>Choisissez une pièce déjà cousue dans notre collection et payez directement en ligne ou à la livraison.</p>
+          <button class="btn btn-secondary" style="border-color:#fff;color:#fff;" onclick="document.getElementById('nouveautes').scrollIntoView({behavior:'smooth'})">Parcourir la boutique</button>
+        </div>
+        <div class="order-mode-card">
+          <h3>Commande sur mesure</h3>
+          <p>Décrivez ce que vous voulez ou partez d'un modèle existant, puis ajoutez vos spécifications (tissu, taille, couleur, broderie...). Notre assistant vous guide.</p>
+          <button class="btn btn-primary" style="background:#fff;color:#14120f;" onclick="openChatbot()">Passer une commande manuelle</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== LOOKBOOK ==================== -->
+<section id="collections">
+  <div class="container">
+    <div class="section-head"><h2>Lookbook</h2><a href="#nouveautes">Voir tout</a></div>
+    <div class="lookbook-grid" id="lookbook-grid"></div>
+  </div>
+</section>
+
+<!-- ==================== PERKS ==================== -->
+<section>
+  <div class="container">
+    <div class="perks">
+      <div class="container">
+        <div class="perk"><span class="icon">🚚</span><div><strong>Livraison rapide</strong><span>Partout au Cameroun</span></div></div>
+        <div class="perk"><span class="icon">🛡️</span><div><strong>Paiement sécurisé</strong><span>100% sécurisé</span></div></div>
+        <div class="perk"><span class="icon">🔁</span><div><strong>Retour facile</strong><span>Sous 7 jours</span></div></div>
+        <div class="perk"><span class="icon">🎧</span><div><strong>Support 24/7</strong><span>À votre écoute</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== AVIS ==================== -->
+<section>
+  <div class="container">
+    <div class="section-head"><h2>Avis clients</h2></div>
+    <div class="review-grid">
+      <div class="review-card"><div class="stars">★★★★★</div><p>Qualité incroyable, je recommande à 100% !</p><div class="reviewer"><span class="avatar"></span> Axel D.</div></div>
+      <div class="review-card"><div class="stars">★★★★★</div><p>Le meilleur site de streetwear au Cameroun.</p><div class="reviewer"><span class="avatar"></span> Yannick M.</div></div>
+      <div class="review-card"><div class="stars">★★★★★</div><p>Livraison rapide et vêtements au top !</p><div class="reviewer"><span class="avatar"></span> Kevin T.</div></div>
+      <div class="review-card"><div class="stars">★★★★★</div><p>Service client très réactif et produits de qualité.</p><div class="reviewer"><span class="avatar"></span> Steve L.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">SIBE STYLE</div>
+        <p class="footer-desc">Votre destination streetwear premium. Qualité, style et authenticité.</p>
+        <div class="social-row"><a href="#">IG</a><a href="#">FB</a><a href="#">TK</a><a href="#">WA</a></div>
+      </div>
+      <div><h4>Informations</h4><ul><li><a href="#">À propos</a></li><li><a href="#">Livraison</a></li><li><a href="#">Retours &amp; échanges</a></li><li><a href="#">FAQ</a></li><li><a href="#">Contact</a></li></ul></div>
+      <div><h4>Mon compte</h4><ul><li><a href="#">Mon profil</a></li><li><a href="#">Mes commandes</a></li><li><a href="#">Mes favoris</a></li><li><a href="#">Mes adresses</a></li></ul></div>
+      <div><h4>Aide</h4><ul><li><a href="#">Paiement sécurisé</a></li><li><a href="#">Guide des tailles</a></li><li><a href="#">Conditions générales</a></li><li><a href="#">Politique de confidentialité</a></li></ul></div>
+      <div>
+        <h4>Newsletter</h4>
+        <p style="font-size:13px;color:#cfcabd;">Inscrivez-vous et recevez nos offres exclusives.</p>
+        <form class="newsletter-form" onsubmit="event.preventDefault(); showToast('Merci ! Vous êtes inscrit(e).');">
+          <input type="email" placeholder="Votre email" required>
+          <button type="submit">➤</button>
+        </form>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2026 SIBE STYLE. Tous droits réservés. · <a href="admin.html" style="color:#8a8578;">Espace fournisseur</a></div>
+  </div>
+</footer>
+
+<!-- ==================== CART DRAWER ==================== -->
+<div class="drawer-overlay" id="cart-overlay" onclick="closeCart()"></div>
+<div class="drawer" id="cart-drawer">
+  <div class="drawer-head"><h3>Mon panier</h3><button onclick="closeCart()">✕</button></div>
+  <div class="drawer-body" id="cart-body"><p style="color:#999;font-size:13px;">Votre panier est vide.</p></div>
+  <div class="drawer-foot">
+    <div class="total-row"><span>Total</span><span id="cart-total">0 FCFA</span></div>
+    <button class="btn btn-primary" style="width:100%;" onclick="openCheckout()">Passer la commande</button>
+  </div>
+</div>
+
+<!-- ==================== MODALS ==================== -->
+<div class="modal-overlay" id="product-modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('product-modal')">✕</button>
+    <div id="product-modal-body"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="checkout-modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('checkout-modal')">✕</button>
+    <h3>Finaliser la commande</h3>
+    <p style="color:#6f6a5e;font-size:13px;margin-top:-4px;">Commande directe — articles déjà cousus.</p>
+    <form id="checkout-form" onsubmit="submitDirectOrder(event)">
+      <div class="form-group"><label>Nom complet</label><input required name="nom"></div>
+      <div class="form-group"><label>Téléphone</label><input required name="telephone" placeholder="+237 ..."></div>
+      <div class="form-group"><label>Adresse de livraison</label><textarea required name="adresse"></textarea></div>
+      <div class="form-group"><label>Mode de paiement</label>
+        <select name="paiement">
+          <option value="mobile_money">Mobile Money</option>
+          <option value="a_la_livraison">Paiement à la livraison</option>
+          <option value="carte">Carte bancaire</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" style="width:100%;" type="submit">Confirmer la commande</button>
+    </form>
+  </div>
+</div>
+
+<!-- ==================== CHATBOT COMMANDE PERSONNALISÉE ==================== -->
+<button id="chatbot-launcher" onclick="openChatbot()">💬 Commande sur mesure</button>
+<div id="chatbot-panel">
+  <div class="chat-head">
+    <div><strong>Assistant SIBE</strong><br><span>Commande personnalisée</span></div>
+    <button onclick="closeChatbot()">✕</button>
+  </div>
+  <div class="chat-body" id="chat-body"></div>
+  <div class="chat-input-row">
+    <input id="chat-input" placeholder="Écrivez votre message..." onkeydown="if(event.key==='Enter'){sendChatText()}">
+    <button onclick="sendChatText()">➤</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- Firebase SDK (compat) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
+<script src="js/firebase-init.js"></script>
+<script src="js/proverbs.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
