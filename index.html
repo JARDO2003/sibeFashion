@@ -355,7 +355,131 @@ footer.site-footer { background: var(--black); color: #cfcabd; padding-top: 60px
   .lookbook-grid { grid-template-columns: repeat(2, 1fr); }
   .perks .container { grid-template-columns: 1fr 1fr; }
 }
+/* Réinitialisation */
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
+html{
+    width:100%;
+    overflow-x:hidden;
+    -webkit-text-size-adjust:100%;
+}
+
+body{
+    width:100%;
+    max-width:100%;
+    overflow-x:hidden;
+    font-family:Arial, sans-serif;
+}
+
+/* Images et vidéos */
+img,
+video,
+iframe{
+    max-width:100%;
+    height:auto;
+    display:block;
+}
+
+/* Conteneur principal */
+.container{
+    width:100%;
+    max-width:1200px;
+    margin:auto;
+    padding:15px;
+}
+
+/* Empêche les éléments de dépasser */
+div,
+section,
+article{
+    max-width:100%;
+}
+
+/* Les tableaux deviennent défilables */
+table{
+    display:block;
+    width:100%;
+    overflow-x:auto;
+}
+
+/* Téléphones Android et iPhone */
+@media screen and (max-width:768px){
+
+    body{
+        font-size:16px;
+    }
+
+    .container{
+        padding:10px;
+    }
+
+    h1{
+        font-size:28px;
+    }
+
+    h2{
+        font-size:22px;
+    }
+
+    h3{
+        font-size:18px;
+    }
+
+    p{
+        font-size:15px;
+        line-height:1.6;
+    }
+
+    button,
+    input,
+    select,
+    textarea{
+        width:100%;
+        font-size:16px;
+    }
+
+    .row{
+        display:flex;
+        flex-direction:column;
+    }
+
+    .col{
+        width:100%;
+    }
+}
+
+/* Très petits téléphones */
+@media screen and (max-width:480px){
+
+    body{
+        font-size:15px;
+    }
+
+    h1{
+        font-size:24px;
+    }
+
+    h2{
+        font-size:20px;
+    }
+
+    h3{
+        font-size:17px;
+    }
+
+    .container{
+        padding:8px;
+    }
+
+    button{
+        width:100%;
+        padding:12px;
+    }
+}
 </style>
 </head>
 <body>
