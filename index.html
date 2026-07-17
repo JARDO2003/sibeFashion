@@ -968,7 +968,7 @@ const DEMO_CATEGORIES = [
   { nom: "Accessoires", image: "https://images.unsplash.com/photo-1521369909029-2afed882baee?q=80&w=300&auto=format&fit=crop" },
 ];
 
-const LOOKBOOK_IMAGES = [
+let LOOKBOOK_IMAGES = [
   "https://images.unsplash.com/photo-1516257984-b1b4d707412e?q=80&w=500&auto=format&fit=crop",
   "https://images.unsplash.com/photo-1552374196-c4e7ffc6e126?q=80&w=500&auto=format&fit=crop",
   "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?q=80&w=500&auto=format&fit=crop",
@@ -1000,8 +1000,8 @@ document.getElementById("splash-enter").addEventListener("click", hideSplash);
 // Auto-fermeture après le chargement (durée du loader)
 setTimeout(hideSplash, 4500);
 
-/* ================= HERO SLIDER (léger) ================= */
-const HERO_SLIDES = [
+/* ================= HERO SLIDER (images gérables depuis l'admin) ================= */
+let HERO_SLIDES = [
   "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?q=80&w=1200&auto=format&fit=crop",
   "https://images.unsplash.com/photo-1516257984-b1b4d707412e?q=80&w=1200&auto=format&fit=crop",
   "https://images.unsplash.com/photo-1552374196-c4e7ffc6e126?q=80&w=1200&auto=format&fit=crop",
@@ -1009,10 +1009,19 @@ const HERO_SLIDES = [
 let heroIdx = 0;
 function renderHero() {
   document.querySelector(".hero-image img").src = HERO_SLIDES[heroIdx];
-  document.getElementById("hero-idx").textContent = heroIdx + 1;
+  document.querySelector(".hero-count").innerHTML = `<span id="hero-idx">${heroIdx + 1}</span> / ${HERO_SLIDES.length}`;
 }
 function heroNext() { heroIdx = (heroIdx + 1) % HERO_SLIDES.length; renderHero(); }
 function heroPrev() { heroIdx = (heroIdx - 1 + HERO_SLIDES.length) % HERO_SLIDES.length; renderHero(); }
+
+async function loadHeroSlides() {
+  try {
+    const snap = await db.collection("heroSlides").orderBy("dateAjout").get();
+    if (!snap.empty) HERO_SLIDES = snap.docs.map((d) => d.data().image);
+  } catch (e) { console.warn("Firestore heroSlides indisponible, repli images par défaut.", e); }
+  heroIdx = 0;
+  renderHero();
+}
 
 /* ================= CHARGEMENT CATALOGUE (Firestore + repli démo) ================= */
 async function loadCategories() {
@@ -1075,6 +1084,14 @@ function filterByCategory(cat) {
 function renderLookbook() {
   document.getElementById("lookbook-grid").innerHTML = LOOKBOOK_IMAGES
     .map((src) => `<img src="${src}" alt="Look SIBE STYLE">`).join("");
+}
+
+async function loadLookbook() {
+  try {
+    const snap = await db.collection("lookbook").orderBy("dateAjout").get();
+    if (!snap.empty) LOOKBOOK_IMAGES = snap.docs.map((d) => d.data().image);
+  } catch (e) { console.warn("Firestore lookbook indisponible, repli images par défaut.", e); }
+  renderLookbook();
 }
 
 function fmtPrice(n) { return Number(n || 0).toLocaleString("fr-FR"); }
@@ -1363,6 +1380,8 @@ renderLookbook();
 renderCart();
 loadCategories();
 loadProducts();
+loadHeroSlides();
+loadLookbook();
 
 </script>
 </body>
