@@ -301,11 +301,11 @@ footer.site-footer { background: var(--black); color: #cfcabd; padding-top: 60px
   box-shadow: 0 8px 24px rgba(0,0,0,.25);
 }
 #chatbot-panel {
-  position: fixed; bottom: 24px; right: 24px; z-index: 401; width: 380px; max-width: 92vw; height: 560px; max-height: 80vh;
-  background: #fff; border-radius: 12px; box-shadow: 0 16px 48px rgba(0,0,0,.3); display: none; flex-direction: column; overflow: hidden;
+  position: fixed; inset: 0; z-index: 401; width: 100vw; height: 100vh; max-width: none; max-height: none;
+  background: #fff; border-radius: 0; box-shadow: none; display: none; flex-direction: column; overflow: hidden;
 }
 #chatbot-panel.open { display: flex; }
-.chat-head { background: var(--black); color: #fff; padding: 16px 18px; display: flex; justify-content: space-between; align-items: center; }
+.chat-head { background: var(--black); color: #fff; padding: 16px 18px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
 .chat-head strong { font-family: var(--font-display); font-size: 18px; letter-spacing: .5px; }
 .chat-head span { font-size: 11px; color: #b7b2a4; }
 .chat-head button { background: none; border: none; color: #fff; font-size: 18px; }
@@ -322,9 +322,15 @@ footer.site-footer { background: var(--black); color: #cfcabd; padding-top: 60px
 .chat-product-pick .cpp { border: 1px solid #ddd; border-radius: var(--radius); overflow: hidden; text-align: left; background: #fff; }
 .chat-product-pick .cpp img { width: 100%; height: 80px; object-fit: cover; }
 .chat-product-pick .cpp span { display: block; font-size: 11px; padding: 6px 8px; }
-.chat-input-row { display: flex; border-top: 1px solid #eee; padding: 10px; gap: 8px; }
-.chat-input-row input { flex: 1; border: 1px solid #ddd; border-radius: 20px; padding: 10px 14px; font-size: 13px; }
-.chat-input-row button { background: var(--black); color: #fff; border: none; width: 40px; border-radius: 50%; }
+.chat-msg img.chat-photo { display: block; max-width: 220px; width: 100%; border-radius: 10px; margin-bottom: 2px; }
+.chat-msg audio.chat-audio { display: block; width: 220px; max-width: 60vw; }
+.chat-input-row { display: flex; align-items: center; border-top: 1px solid #eee; padding: 10px; gap: 8px; flex-shrink: 0; }
+.chat-input-row input { flex: 1; border: 1px solid #ddd; border-radius: 20px; padding: 10px 14px; font-size: 13px; min-width: 0; }
+.chat-input-row button { background: var(--black); color: #fff; border: none; width: 40px; height: 40px; flex-shrink: 0; border-radius: 50%; font-size: 15px; display: flex; align-items: center; justify-content: center; }
+.chat-input-row button.chat-icon-btn { background: #efece3; color: var(--black); }
+.chat-input-row button.chat-icon-btn.recording { background: #c0392b; color: #fff; animation: chatPulse 1s infinite; }
+@keyframes chatPulse { 0%,100% { opacity: 1; } 50% { opacity: .55; } }
+.chat-uploading { font-size: 11px; color: var(--text-muted); align-self: flex-end; }
 
 /* Toast */
 #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-20px); background: var(--black); color: #fff; padding: 12px 22px; border-radius: 30px; font-size: 13px; z-index: 500; opacity: 0; transition: .3s; pointer-events: none; }
@@ -348,7 +354,6 @@ footer.site-footer { background: var(--black); color: #cfcabd; padding-top: 60px
   .cat-grid { grid-template-columns: repeat(2, 1fr); }
   .lookbook-grid { grid-template-columns: repeat(2, 1fr); }
   .perks .container { grid-template-columns: 1fr 1fr; }
-  #chatbot-panel { width: 94vw; right: 3vw; }
 }
 
 </style>
@@ -574,6 +579,9 @@ footer.site-footer { background: var(--black); color: #cfcabd; padding-top: 60px
   </div>
   <div class="chat-body" id="chat-body"></div>
   <div class="chat-input-row">
+    <input type="file" id="chat-photo-input" accept="image/*" hidden onchange="handleChatPhotoSelected(event)">
+    <button type="button" class="chat-icon-btn" id="chat-photo-btn" title="Envoyer une photo" onclick="document.getElementById('chat-photo-input').click()">📷</button>
+    <button type="button" class="chat-icon-btn" id="chat-audio-btn" title="Message vocal" onclick="toggleChatRecording()">🎤</button>
     <input id="chat-input" placeholder="Écrivez votre message..." onkeydown="if(event.key==='Enter'){sendChatText()}">
     <button onclick="sendChatText()">➤</button>
   </div>
@@ -653,10 +661,38 @@ async function uploadImageToCloudinary(file, onProgress) {
 window.uploadImageToCloudinary = uploadImageToCloudinary;
 
 /**
+ * Upload un fichier audio (message vocal du chatbot) vers Cloudinary et
+ * renvoie l'URL sécurisée. Cloudinary héberge l'audio sous le type de
+ * ressource "video".
+ * @param {Blob} blob
+ * @returns {Promise<string>}
+ */
+async function uploadAudioToCloudinary(blob) {
+  const url = `https://api.cloudinary.com/v1_1/${cloudinaryConfig.cloudName}/video/upload`;
+  const formData = new FormData();
+  formData.append("file", blob, "message-vocal.webm");
+  formData.append("upload_preset", cloudinaryConfig.uploadPreset);
+
+  const res = await fetch(url, { method: "POST", body: formData });
+  const data = await res.json();
+  if (data.secure_url) return data.secure_url;
+  throw new Error(data.error?.message || "Échec de l'upload audio Cloudinary");
+}
+
+window.uploadAudioToCloudinary = uploadAudioToCloudinary;
+
+/**
  * Collections Firestore utilisées par le site :
  *  - "produits"   : { nom, prix, prixPromo, categorie, image, description, stock, enPromo, dateAjout }
  *  - "commandes"  : { type: "directe"|"personnalisee", produitId?, nom, telephone, adresse,
- *                     specifications, statut, montant, dateCreation }
+ *                     specifications, statut, montant, dateCreation,
+ *                     whatsapp?, images?: string[], audioUrl?: string|null }
+ *                   Pour les commandes "personnalisee" (assistant SIBE), il n'y a pas de
+ *                   moyen de paiement collecté sur le site : le client laisse simplement son
+ *                   nom et son contact WhatsApp, et l'équipe SIBE le recontacte pour finaliser
+ *                   (paiement, prix, délai). Les photos et messages vocaux envoyés dans le
+ *                   chat sont uploadés sur Cloudinary et leurs URLs sont jointes à la
+ *                   commande, visible automatiquement dans l'espace admin (sibe-admin.html).
  *  - "proverbes"  : { texte } — proverbes additionnels ajoutés par le fournisseur
  *  - "categories" : { nom, image }
  */
@@ -1216,7 +1252,10 @@ function showToast(msg) {
    2) Choisir un modèle existant puis cliquer "Spécifications" pour
       ajouter des options (tissu, taille, couleur, broderie, délai...)
    ================================================================ */
-let chatState = { step: "menu", draft: {} };
+let chatState = { step: "menu", draft: { images: [], audioUrl: null } };
+let chatMediaRecorder = null;
+let chatAudioChunks = [];
+let chatIsRecording = false;
 
 function openChatbot() {
   document.getElementById("chatbot-panel").classList.add("open");
@@ -1242,8 +1281,69 @@ function chatAppendRaw(node) {
   body.scrollTop = body.scrollHeight;
 }
 
+/* ---- Envoi de photo dans le chat ---- */
+async function handleChatPhotoSelected(event) {
+  const file = event.target.files[0];
+  event.target.value = "";
+  if (!file) return;
+
+  const localUrl = URL.createObjectURL(file);
+  chatAppend(`<img class="chat-photo" src="${localUrl}" alt="Photo envoyée"><span>Photo en cours d'envoi...</span>`, "user");
+
+  try {
+    const url = await uploadImageToCloudinary(file);
+    chatState.draft.images = chatState.draft.images || [];
+    chatState.draft.images.push(url);
+    chatAppend("📷 Photo bien reçue, elle sera jointe à votre commande.", "bot");
+  } catch (err) {
+    console.error(err);
+    chatAppend("Échec de l'envoi de la photo. Réessayez.", "bot");
+  }
+}
+
+/* ---- Message vocal (enregistrement micro) ---- */
+async function toggleChatRecording() {
+  if (chatIsRecording) {
+    chatMediaRecorder.stop();
+    return;
+  }
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    chatAppend("Votre navigateur ne permet pas l'enregistrement audio.", "bot");
+    return;
+  }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    chatAudioChunks = [];
+    chatMediaRecorder = new MediaRecorder(stream);
+    chatMediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) chatAudioChunks.push(e.data); };
+    chatMediaRecorder.onstop = async () => {
+      chatIsRecording = false;
+      document.getElementById("chat-audio-btn").classList.remove("recording");
+      stream.getTracks().forEach((t) => t.stop());
+      const blob = new Blob(chatAudioChunks, { type: "audio/webm" });
+      if (blob.size === 0) return;
+      const localUrl = URL.createObjectURL(blob);
+      chatAppend(`<audio class="chat-audio" controls src="${localUrl}"></audio><span>Message vocal en cours d'envoi...</span>`, "user");
+      try {
+        const url = await uploadAudioToCloudinary(blob);
+        chatState.draft.audioUrl = url;
+        chatAppend("🎤 Message vocal bien reçu, il sera joint à votre commande.", "bot");
+      } catch (err) {
+        console.error(err);
+        chatAppend("Échec de l'envoi du message vocal. Réessayez.", "bot");
+      }
+    };
+    chatMediaRecorder.start();
+    chatIsRecording = true;
+    document.getElementById("chat-audio-btn").classList.add("recording");
+  } catch (err) {
+    console.error(err);
+    chatAppend("Impossible d'accéder au micro. Vérifiez les autorisations.", "bot");
+  }
+}
+
 function startChat() {
-  chatState = { step: "menu", draft: {} };
+  chatState = { step: "menu", draft: { images: [], audioUrl: null } };
   chatAppend("Bonjour 👋 Je suis l'assistant SIBE STYLE. Comment voulez-vous procéder pour votre commande sur mesure ?", "bot");
   const opts = document.createElement("div");
   opts.className = "chat-msg bot";
@@ -1307,7 +1407,7 @@ function chatSkipSpecs() {
   chatAskContact();
 }
 function chatAskContact() {
-  chatAppend("Pour finaliser, donnez-moi : votre nom, votre numéro de téléphone et votre ville/adresse de livraison (en un seul message, séparés par des virgules).", "bot");
+  chatAppend("Presque fini 🙌 Il n'y a pas de paiement à faire ici. Donnez-moi juste : votre nom et votre numéro WhatsApp (en un seul message, séparés par une virgule). Notre équipe vous recontacte directement sur WhatsApp pour confirmer les détails, le prix et le paiement.", "bot");
 }
 
 async function sendChatText() {
@@ -1358,15 +1458,19 @@ async function finalizeCustomOrder(contactLine) {
     specifications: chatState.draft.specifications || "",
     nom: parts[0] || contactLine,
     telephone: parts[1] || "",
-    adresse: parts.slice(2).join(", ") || "",
+    whatsapp: parts[1] || "",
+    adresse: "",
     contactBrut: contactLine,
+    images: chatState.draft.images || [],
+    audioUrl: chatState.draft.audioUrl || null,
+    paiement: null,
     statut: "en_attente",
     montant: null,
     dateCreation: firebase.firestore.FieldValue.serverTimestamp(),
   };
   try {
     await db.collection("commandes").add(commande);
-    chatAppend("🎉 Votre commande sur mesure a bien été envoyée ! Notre équipe vous contacte très vite pour confirmer les détails et le prix.", "bot");
+    chatAppend("🎉 Votre commande sur mesure a bien été envoyée avec tous les détails (texte, photos, audio) ! Notre équipe vous contacte très vite sur WhatsApp pour confirmer les détails, le prix et le paiement.", "bot");
     chatState = { step: "done", draft: {} };
   } catch (err) {
     console.error(err);
