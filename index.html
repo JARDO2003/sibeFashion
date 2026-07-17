@@ -415,7 +415,7 @@ footer.site-footer { background: var(--black); color: #cfcabd; padding-top: 60px
       </div>
     </div>
     <div class="hero-image">
-      <img src="https://images.unsplash.com/photo-1618354691373-d851c5c3a990?q=80&w=1200&auto=format&fit=crop" alt="Modèle streetwear SIBE STYLE">
+      <img src="https://images.unsplash.com/photo-1696962678565-bee84e6b9cb6?q=80&w=1200&auto=format&fit=crop" alt="Modèle africain SIBE STYLE">
       <div class="hero-nav">
         <button onclick="heroPrev()">←</button>
         <button onclick="heroNext()">→</button>
@@ -948,33 +948,33 @@ window.getRandomProverb = getRandomProverb;
 /* ---------- Produits de démonstration (repli si Firestore est vide) ---------- */
 const DEMO_PRODUCTS = [
   { id: "demo1", nom: "T-shirt Oversize Noir", prix: 19900, categorie: "T-shirts",
-    image: "https://images.unsplash.com/photo-1503341504253-dff4815485f1?q=80&w=800&auto=format&fit=crop" },
+    image: "https://images.unsplash.com/photo-1617293851568-bac1f3af7e09?q=80&w=800&auto=format&fit=crop" },
   { id: "demo2", nom: "Hoodie Chaotic Marron", prix: 29900, categorie: "Hoodies",
-    image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=800&auto=format&fit=crop" },
+    image: "https://images.unsplash.com/photo-1530884698386-d42ad3199b1f?q=80&w=800&auto=format&fit=crop" },
   { id: "demo3", nom: "Jean Baggy Bleu Clair", prix: 24900, categorie: "Jeans",
-    image: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?q=80&w=800&auto=format&fit=crop" },
+    image: "https://images.unsplash.com/photo-1485570661444-73b3f0ff9d2f?q=80&w=800&auto=format&fit=crop" },
   { id: "demo4", nom: "Cargo Poches Noir", prix: 22900, categorie: "Cargo",
-    image: "https://images.unsplash.com/photo-1517438476312-10d79c077509?q=80&w=800&auto=format&fit=crop" },
+    image: "https://images.unsplash.com/photo-1708170236295-20ab8fbadcef?q=80&w=800&auto=format&fit=crop" },
   { id: "demo5", nom: "Sneakers 530 Blanc", prix: 39900, categorie: "Sneakers",
-    image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=800&auto=format&fit=crop" },
+    image: "https://images.unsplash.com/photo-1531123414780-f74242c2b052?q=80&w=800&auto=format&fit=crop" },
 ];
 
 const DEMO_CATEGORIES = [
-  { nom: "T-shirts", image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=300&auto=format&fit=crop" },
-  { nom: "Hoodies", image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=300&auto=format&fit=crop" },
-  { nom: "Jeans", image: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?q=80&w=300&auto=format&fit=crop" },
-  { nom: "Cargo", image: "https://images.unsplash.com/photo-1517438476312-10d79c077509?q=80&w=300&auto=format&fit=crop" },
-  { nom: "Sneakers", image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=300&auto=format&fit=crop" },
-  { nom: "Accessoires", image: "https://images.unsplash.com/photo-1521369909029-2afed882baee?q=80&w=300&auto=format&fit=crop" },
+  { nom: "T-shirts", image: "https://images.unsplash.com/photo-1617293851568-bac1f3af7e09?q=80&w=300&auto=format&fit=crop" },
+  { nom: "Hoodies", image: "https://images.unsplash.com/photo-1530884698386-d42ad3199b1f?q=80&w=300&auto=format&fit=crop" },
+  { nom: "Jeans", image: "https://images.unsplash.com/photo-1485570661444-73b3f0ff9d2f?q=80&w=300&auto=format&fit=crop" },
+  { nom: "Cargo", image: "https://images.unsplash.com/photo-1708170236295-20ab8fbadcef?q=80&w=300&auto=format&fit=crop" },
+  { nom: "Sneakers", image: "https://images.unsplash.com/photo-1531123414780-f74242c2b052?q=80&w=300&auto=format&fit=crop" },
+  { nom: "Accessoires", image: "https://images.unsplash.com/photo-1708170236215-b6edcad7f49a?q=80&w=300&auto=format&fit=crop" },
 ];
 
 let LOOKBOOK_IMAGES = [
-  "https://images.unsplash.com/photo-1516257984-b1b4d707412e?q=80&w=500&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1552374196-c4e7ffc6e126?q=80&w=500&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?q=80&w=500&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?q=80&w=500&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?q=80&w=500&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=500&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1625646741211-711bdd65c570?q=80&w=500&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1667366982563-dbeedf5281b9?q=80&w=500&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1614291129226-41dae34c2128?q=80&w=500&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1667366925513-573975457271?q=80&w=500&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1611145790393-66f58e1caaf9?q=80&w=500&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1708170236215-b6edcad7f49a?q=80&w=500&auto=format&fit=crop",
 ];
 
 let PRODUCTS = [];
@@ -1002,9 +1002,9 @@ setTimeout(hideSplash, 4500);
 
 /* ================= HERO SLIDER (images gérables depuis l'admin) ================= */
 let HERO_SLIDES = [
-  "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?q=80&w=1200&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1516257984-b1b4d707412e?q=80&w=1200&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1552374196-c4e7ffc6e126?q=80&w=1200&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1696962678565-bee84e6b9cb6?q=80&w=1200&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1529245019870-59b249281fd3?q=80&w=1200&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1493655161922-ef98929de9d8?q=80&w=1200&auto=format&fit=crop",
 ];
 let heroIdx = 0;
 function renderHero() {
